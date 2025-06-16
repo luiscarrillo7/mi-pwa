@@ -40,14 +40,17 @@
     const responseDiv = document.getElementById('response');
 
     // ✅ Verifica conexión con el backend intermedio al cargar
-    fetch(BACKEND_URL)
-      .then(res => res.text())
-      .then(text => {
-        statusDiv.textContent = "✅ Backend Intermedio es público y respondió:\n" + text;
-      })
-      .catch(err => {
-        statusDiv.textContent = "❌ Error de conexión con el backend intermedio: " + err.message;
-      });
+   fetch('https://script.google.com/macros/s/AKfycbxta4VTDK8Kd0vLfzeJMAxDOqzztCJbO4WWJsGn2VQt5UebwuTJ8J5-bECd961yorio/exec')
+  .then(response => {
+    if (!response.ok) throw new Error('Respuesta no válida del backend');
+    return response.text();
+  })
+  .then(text => {
+    document.getElementById('estado-backend').textContent = `✅ Backend Intermedio es público y respondió:\n${text}`;
+  })
+  .catch(error => {
+    document.getElementById('estado-backend').textContent = `❌ Error de conexión con el backend intermedio: ${error.message}`;
+  });
 
     // ✅ Manejo del login
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
