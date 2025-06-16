@@ -9,15 +9,16 @@
       font-family: Arial, sans-serif;
       padding: 2em;
     }
-    #status {
+    #estado-backend {
       margin-bottom: 1em;
       font-weight: bold;
+      white-space: pre-line;
     }
   </style>
 </head>
 <body>
 
-  <div id="status">Verificando conexión con el backend…</div>
+  <div id="estado-backend">Verificando conexión con el backend…</div>
 
   <form id="loginForm">
     <label>
@@ -34,23 +35,24 @@
   <pre id="response"></pre>
 
   <script>
-    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec'; // ⚠️ Reemplaza con tu URL real
-                   
-    const statusDiv = document.getElementById('status');
+    // ⚠️ Cambia esta URL si tu backend intermedio tiene una nueva URL
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
+
+    const estadoDiv = document.getElementById('estado-backend');
     const responseDiv = document.getElementById('response');
 
     // ✅ Verifica conexión con el backend intermedio al cargar
-   fetch('https://script.google.com/macros/s/AKfycbxta4VTDK8Kd0vLfzeJMAxDOqzztCJbO4WWJsGn2VQt5UebwuTJ8J5-bECd961yorio/exec')
-  .then(response => {
-    if (!response.ok) throw new Error('Respuesta no válida del backend');
-    return response.text();
-  })
-  .then(text => {
-    document.getElementById('estado-backend').textContent = `✅ Backend Intermedio es público y respondió:\n${text}`;
-  })
-  .catch(error => {
-    document.getElementById('estado-backend').textContent = `❌ Error de conexión con el backend intermedio: ${error.message}`;
-  });
+    fetch(BACKEND_URL)
+      .then(response => {
+        if (!response.ok) throw new Error('Respuesta no válida del backend');
+        return response.text();
+      })
+      .then(text => {
+        estadoDiv.textContent = `✅ Backend Intermedio es público y respondió:\n${text}`;
+      })
+      .catch(error => {
+        estadoDiv.textContent = `❌ Error de conexión con el backend intermedio: ${error.message}`;
+      });
 
     // ✅ Manejo del login
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
@@ -77,3 +79,4 @@
   </script>
 </body>
 </html>
+
