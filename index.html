@@ -11,28 +11,34 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
       height: 100vh;
       margin: 0;
     }
+
     .login-container {
       background: white;
       padding: 2rem;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       width: 300px;
+      display: none; /* Oculto hasta verificar backend */
     }
+
     .login-container h2 {
       text-align: center;
       margin-bottom: 1.5rem;
     }
-    .login-container input {
+
+    input {
       width: 100%;
       padding: 0.5rem;
       margin: 0.5rem 0;
       border-radius: 5px;
       border: 1px solid #ccc;
     }
-    .login-container button {
+
+    button {
       width: 100%;
       padding: 0.7rem;
       margin-top: 1rem;
@@ -42,9 +48,28 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    .login-container button:hover {
+
+    button:hover {
       background: #0056b3;
     }
+
+    .status {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .ok {
+      background-color: #e0ffe0;
+      color: green;
+    }
+
+    .error {
+      background-color: #ffe0e0;
+      color: red;
+    }
+
     .message {
       margin-top: 1rem;
       text-align: center;
@@ -53,7 +78,10 @@
   </style>
 </head>
 <body>
-  <div class="login-container">
+
+  <div id="status" class="status">🔄 Verificando backend intermedio...</div>
+
+  <div class="login-container" id="loginSection">
     <h2>Iniciar Sesión</h2>
     <form id="loginForm">
       <input type="text" id="username" placeholder="DNI" required />
@@ -64,45 +92,63 @@
   </div>
 
   <script>
-    const API_BACKEND_INTERMEDIO = 'https://script.google.com/macros/s/AKfycbxta4VTDK8Kd0vLfzeJMAxDOqzztCJbO4WWJsGn2VQt5UebwuTJ8J5-bECd961yorio/exec';
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxta4VTDK8Kd0vLfzeJMAxDOqzztCJbO4WWJsGn2VQt5UebwuTJ8J5-bECd961yorio/exec';
 
+    const statusDiv = document.getElementById('status');
+    const loginSection = document.getElementById('loginSection');
+    const messageDiv = document.getElementById('message');
+
+    // Verifica si el backend intermedio está disponible
+    fetch(BACKEND_URL)
+      .then(res => res.text())
+      .then(text => {
+        if (text.includes('✅')) {
+          statusDiv.textContent = `✅ Backend Intermedio es público y respondió:\n${text}`;
+          statusDiv.className = 'status ok';
+          loginSection.style.display = 'block';
+        } else {
+          throw new Error('Respuesta inesperada del backend.');
+        }
+      })
+      .catch(err => {
+        statusDiv.textContent = `❌ Error de conexión con el backend intermedio: ${err.message}`;
+        statusDiv.className = 'status error';
+      });
+
+    // Login POST al backend intermedio
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
       e.preventDefault();
 
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
-      const message = document.getElementById('message');
-      message.textContent = '⏳ Verificando credenciales...';
+      messageDiv.textContent = '⏳ Verificando credenciales...';
+      messageDiv.style.color = 'black';
 
       try {
-        const response = await fetch(API_BACKEND_INTERMEDIO, {
+        const response = await fetch(BACKEND_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
         });
 
-        if (!response.ok) {
-          throw new Error('Error en la conexión con el backend.');
-        }
+        if (!response.ok) throw new Error('Error en la respuesta del servidor.');
 
         const data = await response.json();
 
         if (data.status === 'success') {
-          message.textContent = `✅ Bienvenido, ${data.nombre} (${data.dni})`;
-          message.style.color = 'green';
-          // Aquí puedes redirigir o mostrar más info si deseas
+          messageDiv.textContent = `✅ Bienvenido, ${data.nombre || 'usuario'} (${data.dni})`;
+          messageDiv.style.color = 'green';
         } else {
-          message.textContent = '❌ Usuario o contraseña incorrecta.';
-          message.style.color = 'red';
+          messageDiv.textContent = `❌ ${data.message || 'Credenciales inválidas.'}`;
+          messageDiv.style.color = 'red';
         }
-      } catch (error) {
-        console.error(error);
-        message.textContent = '❌ Error al conectar con el servidor.';
-        message.style.color = 'red';
+      } catch (err) {
+        messageDiv.textContent = `❌ Error al conectar con el backend: ${err.message}`;
+        messageDiv.style.color = 'red';
       }
     });
   </script>
+
 </body>
 </html>
+
