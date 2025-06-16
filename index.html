@@ -35,13 +35,12 @@
   <pre id="response"></pre>
 
   <script>
-    // ⚠️ Cambia esta URL si tu backend intermedio tiene una nueva URL
     const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
 
     const estadoDiv = document.getElementById('estado-backend');
     const responseDiv = document.getElementById('response');
 
-    // ✅ Verifica conexión con el backend intermedio al cargar
+    // ✅ Verificación del backend intermedio
     fetch(BACKEND_URL)
       .then(response => {
         if (!response.ok) throw new Error('Respuesta no válida del backend');
