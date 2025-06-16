@@ -9,10 +9,10 @@
       font-family: Arial, sans-serif;
       padding: 2em;
     }
-    #estado-backend {
+    #estado-backend, #response {
       margin-bottom: 1em;
       font-weight: bold;
-      white-space: pre-line;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -35,26 +35,26 @@
   <pre id="response"></pre>
 
   <script>
-    // ✅ URL de tu backend intermedio (ACTUAL)
+    // ⚠️ Reemplaza con TU URL del backend intermedio desplegado
     const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
 
     const estadoBackend = document.getElementById('estado-backend');
     const responseDiv = document.getElementById('response');
 
-    // ✅ Verifica conexión con el backend intermedio al cargar
+    // ✅ Verifica conexión al cargar
     fetch(BACKEND_URL)
-      .then(response => {
-        if (!response.ok) throw new Error('Respuesta no válida del backend');
-        return response.text();
+      .then(res => {
+        if (!res.ok) throw new Error('Error al verificar el backend');
+        return res.text();
       })
       .then(texto => {
         estadoBackend.textContent = `✅ Backend Intermedio es público y respondió:\n${texto}`;
       })
-      .catch(error => {
-        estadoBackend.textContent = `❌ Error de conexión con el backend intermedio: ${error.message}`;
+      .catch(err => {
+        estadoBackend.textContent = `❌ Error de conexión con el backend intermedio: ${err.message}`;
       });
 
-    // ✅ Manejo del login
+    // ✅ Enviar login
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
       e.preventDefault();
 
@@ -64,21 +64,19 @@
       try {
         const res = await fetch(BACKEND_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
         });
 
-        if (!res.ok) throw new Error('Error en la respuesta del backend');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const data = await res.json();
         responseDiv.textContent = JSON.stringify(data, null, 2);
-      } catch (error) {
-        responseDiv.textContent = '❌ Error al conectar con el backend: ' + error.message;
+      } catch (err) {
+        responseDiv.textContent = '❌ Error al conectar con el backend: ' + err.message;
       }
     });
   </script>
+
 </body>
 </html>
-
