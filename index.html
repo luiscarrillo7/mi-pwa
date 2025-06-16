@@ -1,74 +1,30 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Login simple con backend intermedio</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verificación de Backend</title>
 </head>
 <body>
-  <h2>🧪 Verificación de conexión al Backend Intermedio</h2>
-  <div id="conexion-status">⏳ Verificando conexión...</div>
-
-  <h2>🔐 Login</h2>
-  <input type="text" id="username" placeholder="Usuario (DNI)">
-  <input type="password" id="password" placeholder="Contraseña">
-  <button onclick="login()">Iniciar sesión</button>
-
-  <div id="login-status"></div>
+  <h2>Verificando acceso al Backend...</h2>
+  <div id="status">🔄 Verificando...</div>
 
   <script>
     const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
 
-    // Verificar conexión al backend intermedio
-    async function verificarConexion() {
-      try {
-        const response = await fetch(BACKEND_URL, { method: 'OPTIONS' });
-        if (response.ok) {
-          document.getElementById('conexion-status').innerText = '✅ Backend Intermedio accesible correctamente.';
-        } else {
-          document.getElementById('conexion-status').innerText = '❌ Backend Intermedio no respondió correctamente.';
-        }
-      } catch (error) {
-        document.getElementById('conexion-status').innerText = '❌ Error de conexión: ' + error.message;
+    fetch(BACKEND_URL, {
+      method: 'OPTIONS'
+    })
+    .then(res => {
+      if (res.ok) {
+        document.getElementById('status').textContent = '✅ Backend accesible correctamente.';
+      } else {
+        document.getElementById('status').textContent = '⚠️ El backend respondió, pero no con éxito. Código: ' + res.status;
       }
-    }
-
-    // Función de login
-    async function login() {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!username || !password) {
-        document.getElementById('login-status').innerText = '❌ Usuario y contraseña requeridos.';
-        return;
-      }
-
-      document.getElementById('login-status').innerText = '🔄 Verificando credenciales...';
-
-      try {
-        const response = await fetch(BACKEND_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, password })
-        });
-
-        const data = await response.json();
-
-        if (data.status === 'success') {
-          document.getElementById('login-status').innerText =
-            `✅ Bienvenido ${data.nombre} (${data.dni})\nCargo: ${data.cargo}\nPuntaje: ${data.puntaje}`;
-        } else {
-          document.getElementById('login-status').innerText = '❌ ' + data.message;
-        }
-
-      } catch (error) {
-        document.getElementById('login-status').innerText = '❌ Error al conectar con el backend: ' + error.message;
-      }
-    }
-
-    // Ejecutar verificación al cargar
-    verificarConexion();
+    })
+    .catch(err => {
+      document.getElementById('status').textContent = '❌ Error de conexión: ' + err.message;
+    });
   </script>
 </body>
 </html>
