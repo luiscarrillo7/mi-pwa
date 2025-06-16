@@ -2,29 +2,28 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Verificación de Backend</title>
+  <title>Verificar Acceso al Backend</title>
 </head>
 <body>
-  <h2>Verificando acceso al Backend...</h2>
-  <div id="status">🔄 Verificando...</div>
+  <h2>🧪 Verificando acceso al Backend Intermedio...</h2>
+  <div id="resultado">⏳ Conectando...</div>
 
   <script>
-    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
+    const backendUrl = "https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec";
 
-    fetch(BACKEND_URL, {
-      method: 'OPTIONS'
-    })
-    .then(res => {
-      if (res.ok) {
-        document.getElementById('status').textContent = '✅ Backend accesible correctamente.';
-      } else {
-        document.getElementById('status').textContent = '⚠️ El backend respondió, pero no con éxito. Código: ' + res.status;
-      }
-    })
-    .catch(err => {
-      document.getElementById('status').textContent = '❌ Error de conexión: ' + err.message;
-    });
+    fetch(backendUrl)
+      .then(response => {
+        if (!response.ok) throw new Error("Estado HTTP " + response.status);
+        return response.text();
+      })
+      .then(texto => {
+        document.getElementById("resultado").innerHTML =
+          `✅ Backend Intermedio es público y respondió:<br><pre>${texto}</pre>`;
+      })
+      .catch(error => {
+        document.getElementById("resultado").innerHTML =
+          `❌ Error: No se pudo conectar con el backend.<br><pre>${error}</pre>`;
+      });
   </script>
 </body>
 </html>
