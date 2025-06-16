@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Mi App</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('Service Worker registrado'));
+      }
+    </script>
+    <style>
+      html, body, iframe { margin: 0; padding: 0; height: 100%; width: 100%; border: none; }
+    </style>
+  </head>
+  <body>
+    <iframe src="https://script.google.com/macros/s/AKfycbyNEp8c0xPIJGQYE5hVRiQ5M2Uje4ASSKIuOgZYwZkUp8aLXRshHqN_qjCByiG3ZKT1/exec"></iframe>
+  </body>
+</html>
