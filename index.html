@@ -9,16 +9,15 @@
       font-family: Arial, sans-serif;
       padding: 2em;
     }
-    #estado-backend {
+    #status {
       margin-bottom: 1em;
       font-weight: bold;
-      white-space: pre-line;
     }
   </style>
 </head>
 <body>
 
-  <div id="estado-backend">Verificando conexión con el backend…</div>
+  <div id="status">Verificando conexión con el backend…</div>
 
   <form id="loginForm">
     <label>
@@ -35,22 +34,21 @@
   <pre id="response"></pre>
 
   <script>
-    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
-
-    const estadoDiv = document.getElementById('estado-backend');
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec'; // Tu backend intermedio
+    const statusDiv = document.getElementById('status');
     const responseDiv = document.getElementById('response');
 
-    // ✅ Verificación del backend intermedio
+    // ✅ Verifica conexión con el backend intermedio
     fetch(BACKEND_URL)
       .then(response => {
         if (!response.ok) throw new Error('Respuesta no válida del backend');
         return response.text();
       })
       .then(text => {
-        estadoDiv.textContent = `✅ Backend Intermedio es público y respondió:\n${text}`;
+        statusDiv.textContent = `✅ Backend Intermedio es público y respondió:\n${text}`;
       })
       .catch(error => {
-        estadoDiv.textContent = `❌ Error de conexión con el backend intermedio: ${error.message}`;
+        statusDiv.textContent = `❌ Error de conexión con el backend intermedio: ${error.message}`;
       });
 
     // ✅ Manejo del login
@@ -78,4 +76,3 @@
   </script>
 </body>
 </html>
-
