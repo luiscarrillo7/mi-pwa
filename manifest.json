@@ -1,8 +1,10 @@
 {
   "name": "Login Capacitación",
   "short_name": "Login",
-  "start_url": ".",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
   "icons": [
