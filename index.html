@@ -35,26 +35,26 @@
   <pre id="response"></pre>
 
   <script>
-    // ⚠️ Reemplaza con TU URL del backend intermedio desplegado
+    // ⚠️ Usa la URL de TU backend intermedio desplegado
     const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
 
     const estadoBackend = document.getElementById('estado-backend');
     const responseDiv = document.getElementById('response');
 
-    // ✅ Verifica conexión al cargar
+    // ✅ Verifica conexión con backend intermedio
     fetch(BACKEND_URL)
       .then(res => {
         if (!res.ok) throw new Error('Error al verificar el backend');
         return res.text();
       })
       .then(texto => {
-        estadoBackend.textContent = `✅ Backend Intermedio es público y respondió:\n${texto}`;
+        estadoBackend.innerHTML = `✅ Backend Intermedio es público y respondió:<br>${texto}`;
       })
       .catch(err => {
         estadoBackend.textContent = `❌ Error de conexión con el backend intermedio: ${err.message}`;
       });
 
-    // ✅ Enviar login
+    // ✅ Manejo del login
     document.getElementById('loginForm').addEventListener('submit', async function (e) {
       e.preventDefault();
 
