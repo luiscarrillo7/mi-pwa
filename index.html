@@ -1,33 +1,70 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Verificación de Backend</title>
+  <meta charset="UTF-8">
+  <title>Login de Prueba</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+    }
+    input, button {
+      display: block;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      width: 100%;
+      max-width: 300px;
+    }
+    #resultado {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h2>Verificando acceso al Backend...</h2>
-  <div id="status">🔄 Verificando...</div>
+  <h2>🔐 Login de prueba</h2>
+
+  <label for="username">DNI</label>
+  <input type="text" id="username" placeholder="Ingrese su DNI">
+
+  <label for="password">Contraseña</label>
+  <input type="password" id="password" placeholder="Ingrese su contraseña">
+
+  <button onclick="login()">Iniciar sesión</button>
+
+  <div id="resultado">🧪 Esperando inicio de sesión...</div>
 
   <script>
     const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
 
-    fetch(BACKEND_URL, {
-      method: 'OPTIONS'
-    })
-    .then(res => {
-      if (res.ok) {
-        document.getElementById('status').textContent = '✅ Backend accesible correctamente.';
-      } else {
-        document.getElementById('status').textContent = '⚠️ El backend respondió, pero no con éxito. Código: ' + res.status;
+    async function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const resultado = document.getElementById('resultado');
+
+      resultado.textContent = '⏳ Verificando...';
+
+      try {
+        const res = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          resultado.textContent = `✅ Bienvenido ${data.nombre || ''} (${data.dni})`;
+        } else {
+          resultado.textContent = `❌ ${data.message}`;
+        }
+      } catch (err) {
+        console.error(err);
+        resultado.textContent = '❌ Error al conectar con el backend';
       }
-    })
-    .catch(err => {
-      document.getElementById('status').textContent = '❌ Error de conexión: ' + err.message;
-    });
+    }
   </script>
 </body>
 </html>
-
-
-
