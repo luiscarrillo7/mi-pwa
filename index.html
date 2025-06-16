@@ -9,15 +9,16 @@
       font-family: Arial, sans-serif;
       padding: 2em;
     }
-    #status {
+    #estado-backend {
       margin-bottom: 1em;
       font-weight: bold;
+      white-space: pre-line;
     }
   </style>
 </head>
 <body>
 
-  <div id="status">Verificando conexión con el backend…</div>
+  <div id="estado-backend">Verificando conexión con el backend…</div>
 
   <form id="loginForm">
     <label>
@@ -34,21 +35,23 @@
   <pre id="response"></pre>
 
   <script>
-    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec'; // Tu backend intermedio
-    const statusDiv = document.getElementById('status');
+    // ✅ URL de tu backend intermedio (ACTUAL)
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
+
+    const estadoBackend = document.getElementById('estado-backend');
     const responseDiv = document.getElementById('response');
 
-    // ✅ Verifica conexión con el backend intermedio
+    // ✅ Verifica conexión con el backend intermedio al cargar
     fetch(BACKEND_URL)
       .then(response => {
         if (!response.ok) throw new Error('Respuesta no válida del backend');
         return response.text();
       })
-      .then(text => {
-        statusDiv.textContent = `✅ Backend Intermedio es público y respondió:\n${text}`;
+      .then(texto => {
+        estadoBackend.textContent = `✅ Backend Intermedio es público y respondió:\n${texto}`;
       })
       .catch(error => {
-        statusDiv.textContent = `❌ Error de conexión con el backend intermedio: ${error.message}`;
+        estadoBackend.textContent = `❌ Error de conexión con el backend intermedio: ${error.message}`;
       });
 
     // ✅ Manejo del login
@@ -67,6 +70,8 @@
           body: JSON.stringify({ username, password })
         });
 
+        if (!res.ok) throw new Error('Error en la respuesta del backend');
+
         const data = await res.json();
         responseDiv.textContent = JSON.stringify(data, null, 2);
       } catch (error) {
@@ -76,3 +81,4 @@
   </script>
 </body>
 </html>
+
