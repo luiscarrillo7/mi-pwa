@@ -1,12 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <base target="_top">
   <title>Login</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icon192.png">
-  <meta name="theme-color" content="#007bff" />
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -32,7 +28,6 @@
       padding: 10px;
       margin-bottom: 15px;
       border-radius: 4px;
-      box-sizing: border-box;
     }
     button {
       background-color: #007bff;
@@ -63,8 +58,8 @@
   <div class="login-container">
     <h2>LOGIN</h2>
     <form id="loginForm">
-      <input type="text" id="username" placeholder="DNI" required>
-      <input type="password" id="password" placeholder="Contraseña" required>
+      <input type="text" id="username" placeholder="DNI" required><br>
+      <input type="password" id="password" placeholder="Contraseña" required><br>
       <button type="submit">Entrar</button>
     </form>
     <div id="message"></div>
@@ -72,9 +67,6 @@
   </div>
 
   <script>
-    // Reemplaza esto con la URL de tu Apps Script Web App desplegado
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxxxxxxx/exec";
-
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -83,7 +75,7 @@
       const messageDiv = document.getElementById('message');
       const userInfoDiv = document.getElementById('userInfo');
 
-      fetch(WEB_APP_URL, {
+      fetch('https://script.google.com/macros/s/AKfycbxta4VTDK8Kd0vLfzeJMAxDOqzztCJbO4WWJsGn2VQt5UebwuTJ8J5-bECd961yorio/exec', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -115,11 +107,6 @@
         messageDiv.textContent = 'Error: ' + error.message;
       });
     });
-
-    // Registro del service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
   </script>
 </body>
 </html>
