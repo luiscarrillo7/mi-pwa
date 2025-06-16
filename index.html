@@ -2,43 +2,108 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Verificar Conexión al Backend</title>
+  <title>Login con Validación de Backend</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 2rem;
-      background: #f0f0f0;
+      background-color: #f2f2f2;
     }
-    #estado {
+
+    #estado, #resultado {
+      margin-bottom: 1rem;
       padding: 1rem;
       border-radius: 8px;
-      font-weight: bold;
     }
+
     .ok {
       color: green;
     }
+
     .error {
       color: red;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    input, button {
+      padding: 0.5rem;
+      margin: 0.3rem;
+    }
+
+    form {
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <h2>🧪 Verificando acceso al Backend Intermedio</h2>
+  <h2>🧪 Verificando acceso al Backend Intermedio...</h2>
   <div id="estado">🔄 Verificando...</div>
+
+  <form id="loginForm" class="hidden">
+    <h3>🔐 Iniciar Sesión</h3>
+    <input type="text" id="username" placeholder="Usuario (DNI)" required /><br />
+    <input type="password" id="password" placeholder="Contraseña" required /><br />
+    <button type="submit">Ingresar</button>
+  </form>
+
+  <div id="resultado"></div>
 
   <script>
     const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
 
+    // Verificar conexión al backend
     fetch(BACKEND_URL)
       .then(response => response.text())
       .then(text => {
-        document.getElementById('estado').innerHTML = `✅ ${text}`;
+        document.getElementById('estado').innerHTML = `✅ Backend Intermedio es público y respondió:<br><strong>${text}</strong>`;
         document.getElementById('estado').classList.add('ok');
+        document.getElementById('loginForm').classList.remove('hidden');
       })
       .catch(error => {
         document.getElementById('estado').innerHTML = `❌ Error de conexión: ${error}`;
         document.getElementById('estado').classList.add('error');
       });
+
+    // Manejar el login
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      document.getElementById('resultado').textContent = '🔄 Verificando credenciales...';
+      document.getElementById('resultado').className = '';
+
+      fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          document.getElementById('resultado').innerHTML = `✅ Bienvenido, <strong>${data.dni}</strong>.<br>
+            Nombre: ${data.nombre}<br>
+            Cargo: ${data.cargo}<br>
+            Establecimiento: ${data.eess}<br>
+            RIS: ${data.ris}<br>
+            Horas: ${data.horas}<br>
+            Puntaje: ${data.puntaje}`;
+          document.getElementById('resultado').classList.add('ok');
+        } else {
+          document.getElementById('resultado').textContent = `❌ ${data.message}`;
+          document.getElementById('resultado').classList.add('error');
+        }
+      })
+      .catch(err => {
+        document.getElementById('resultado').textContent = `❌ Error al conectar con el backend: ${err}`;
+        document.getElementById('resultado').classList.add('error');
+      });
+    });
   </script>
 </body>
 </html>
