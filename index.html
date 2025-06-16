@@ -1,35 +1,35 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Test Backend</title>
-  </head>
-  <body>
-    <h1>Prueba de conexión</h1>
-    <button onclick="probarConexion()">Probar</button>
-    <pre id="salida"></pre>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Verificar Backend Intermedio</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    .status { font-size: 1.2rem; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Verificando acceso al Backend Intermedio</h1>
+  <div id="status" class="status">⌛ Probando conexión...</div>
 
-    <script>
-      function probarConexion() {
-        fetch('https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            username: '42707692',
-            password: '42707692'
-          })
-        })
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('salida').textContent = JSON.stringify(data, null, 2);
-        })
-        .catch(err => {
-          document.getElementById('salida').textContent = '❌ Error: ' + err;
-        });
-      }
-    </script>
-  </body>
+  <script>
+    const BACKEND_URL = 'https://script.google.com/macros/s/TU_BACKEND_INTERMEDIO/exec'; // Reemplaza con tu URL real
+
+    fetch(BACKEND_URL)
+      .then(res => res.text())
+      .then(text => {
+        if (text.includes("funcionando") || text.includes("Backend")) {
+          document.getElementById('status').innerHTML = '✅ Backend Intermedio es público y está funcionando.';
+        } else {
+          document.getElementById('status').innerHTML = '⚠️ Backend respondió, pero no parece estar funcionando correctamente.';
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('status').innerHTML = '❌ No se pudo conectar al Backend Intermedio. ¿Está publicado como "Cualquiera, incluso anónimo"?';
+      });
+  </script>
+</body>
 </html>
+
 
