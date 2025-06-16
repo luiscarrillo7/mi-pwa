@@ -2,27 +2,42 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Verificar Acceso al Backend</title>
+  <title>Verificar Conexión al Backend</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f0f0f0;
+    }
+    #estado {
+      padding: 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    .ok {
+      color: green;
+    }
+    .error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
-  <h2>🧪 Verificando acceso al Backend Intermedio...</h2>
-  <div id="resultado">⏳ Conectando...</div>
+  <h2>🧪 Verificando acceso al Backend Intermedio</h2>
+  <div id="estado">🔄 Verificando...</div>
 
   <script>
-    const backendUrl = "https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec";
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
 
-    fetch(backendUrl)
-      .then(response => {
-        if (!response.ok) throw new Error("Estado HTTP " + response.status);
-        return response.text();
-      })
-      .then(texto => {
-        document.getElementById("resultado").innerHTML =
-          `✅ Backend Intermedio es público y respondió:<br><pre>${texto}</pre>`;
+    fetch(BACKEND_URL)
+      .then(response => response.text())
+      .then(text => {
+        document.getElementById('estado').innerHTML = `✅ ${text}`;
+        document.getElementById('estado').classList.add('ok');
       })
       .catch(error => {
-        document.getElementById("resultado").innerHTML =
-          `❌ Error: No se pudo conectar con el backend.<br><pre>${error}</pre>`;
+        document.getElementById('estado').innerHTML = `❌ Error de conexión: ${error}`;
+        document.getElementById('estado').classList.add('error');
       });
   </script>
 </body>
