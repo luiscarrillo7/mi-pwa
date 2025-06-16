@@ -1,35 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Verificar Backend Intermedio</title>
-  <style>
-    body { font-family: sans-serif; padding: 2rem; }
-    .status { font-size: 1.2rem; margin-top: 1rem; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verificación de Backend</title>
 </head>
 <body>
-  <h1>🧪 Verificando acceso al Backend Intermedio</h1>
-  <div id="status" class="status">⌛ Probando conexión...</div>
+  <h2>Verificando acceso al Backend...</h2>
+  <div id="status">🔄 Verificando...</div>
 
   <script>
-    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec'; // Reemplaza con tu URL real
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
 
-    fetch(BACKEND_URL)
-      .then(res => res.text())
-      .then(text => {
-        if (text.includes("funcionando") || text.includes("Backend")) {
-          document.getElementById('status').innerHTML = '✅ Backend Intermedio es público y está funcionando.';
-        } else {
-          document.getElementById('status').innerHTML = '⚠️ Backend respondió, pero no parece estar funcionando correctamente.';
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById('status').innerHTML = '❌ No se pudo conectar al Backend Intermedio. ¿Está publicado como "Cualquiera, incluso anónimo"?';
-      });
+    fetch(BACKEND_URL, {
+      method: 'OPTIONS'
+    })
+    .then(res => {
+      if (res.ok) {
+        document.getElementById('status').textContent = '✅ Backend accesible correctamente.';
+      } else {
+        document.getElementById('status').textContent = '⚠️ El backend respondió, pero no con éxito. Código: ' + res.status;
+      }
+    })
+    .catch(err => {
+      document.getElementById('status').textContent = '❌ Error de conexión: ' + err.message;
+    });
   </script>
 </body>
 </html>
+
 
 
