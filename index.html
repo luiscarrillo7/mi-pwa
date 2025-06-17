@@ -4,15 +4,31 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Login JSONP</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+    }
+    #estado {
+      margin-bottom: 1em;
+      font-weight: bold;
+    }
+    #response {
+      margin-top: 1em;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 <body>
   <div id="estado">Verificando conexión con el backend…</div>
+
   <form id="loginForm" style="display:none;">
     <label>Usuario: <input type="text" id="username" required></label><br>
     <label>Contraseña: <input type="password" id="password" required></label><br>
     <button type="submit">Iniciar sesión</button>
   </form>
-  <pre id="response"></pre>
+
+  <div id="response"></div>
 
   <script>
     const BACKEND = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
@@ -28,20 +44,33 @@
         document.getElementById('estado').textContent = '❌ Error de conexión con backend: ' + err;
       });
 
+    // Maneja el login
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const u = encodeURIComponent(document.getElementById('username').value.trim());
       const p = encodeURIComponent(document.getElementById('password').value.trim());
       const cb = 'cb' + Date.now();
 
+      const responseDiv = document.getElementById('response');
+      responseDiv.textContent = '🔄 Verificando...';
+
       window[cb] = function(data) {
-        document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+        if (data.status === "success") {
+          responseDiv.innerHTML = `✅ <strong>${data.message}</strong><br>DNI: <code>${data.dni}</code>`;
+        } else {
+          responseDiv.innerHTML = `❌ <strong>${data.message}</strong>`;
+        }
         delete window[cb];
         document.head.removeChild(script);
       };
 
       const script = document.createElement('script');
       script.src = `${BACKEND}?username=${u}&password=${p}&jsonpCallback=${cb}`;
+      script.onerror = function() {
+        responseDiv.textContent = '❌ Error al conectar con el backend';
+        delete window[cb];
+        document.head.removeChild(script);
+      };
       document.head.appendChild(script);
     });
   </script>
