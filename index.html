@@ -45,11 +45,14 @@
       try {
         const r = await fetch(`${URL}?username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`);
         const j = await r.json();
-        if (j.status === 'success' || j.status === 'ok') {
-          resp.textContent = `✅ Login exitoso\n${j.message || ''}\nDNI: ${j.dni || ''}`;
-        } else {
-          resp.textContent = '❌ ' + (j.message || 'Error');
-        }
+if (j.status === 'success') {
+  resp.textContent = `✅ Login exitoso\n${j.mensaje || ''}\nDNI: ${j.dni || ''}`;
+} else if (j.status === 'error') {
+  resp.textContent = '❌ ' + (j.mensaje || 'Credenciales incorrectas');
+} else {
+  resp.textContent = '❌ Respuesta inesperada del servidor';
+}
+
       } catch (err) {
         resp.textContent = '❌ Error conexión: ' + err.message;
       }
