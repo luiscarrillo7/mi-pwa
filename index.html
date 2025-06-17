@@ -45,6 +45,8 @@
       try {
         const r = await fetch(`${URL}?username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`);
         const j = await r.json();
+console.log(j); // <-- Agrega esto para depurar
+
 if (j.status === 'success') {
   resp.textContent = `✅ Login exitoso\n${j.mensaje || ''}\nDNI: ${j.dni || ''}`;
 } else if (j.status === 'error') {
