@@ -5,17 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login Seguro</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; max-width: 400px; margin: auto; }
-    #estado { margin-bottom: 1em; }
-    #response { white-space: pre-wrap; margin-top: 1em; background: #f1f1f1; padding: 1em; border-radius: 5px; }
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+      background: #f9f9f9;
+    }
+    #estado {
+      margin-bottom: 1em;
+      font-weight: bold;
+    }
+    #response {
+      white-space: pre-wrap;
+      margin-top: 1em;
+      background: #f1f1f1;
+      padding: 1em;
+      border-radius: 5px;
+    }
+    label {
+      display: block;
+      margin: 0.5em 0;
+    }
   </style>
 </head>
 <body>
   <div id="estado">🔄 Verificando conexión con el backend…</div>
 
   <form id="loginForm" style="display:none;">
-    <label>Usuario: <input type="text" id="username" required /></label><br />
-    <label>Contraseña: <input type="password" id="password" required /></label><br />
+    <label>Usuario:
+      <input type="text" id="username" required />
+    </label>
+    <label>Contraseña:
+      <input type="password" id="password" required />
+    </label>
     <button type="submit">Iniciar sesión</button>
   </form>
 
@@ -24,23 +47,19 @@
   <script>
     const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
 
-    // Verificar conexión con el backend
-    fetch(BACKEND_URL, {
-      method: 'GET',
-      mode: 'cors',
-      cache: 'no-cache'
-    })
-    .then(res => res.json())
-    .then(json => {
-      document.getElementById('estado').textContent = '✅ ' + json.mensaje;
-      document.getElementById('loginForm').style.display = 'block';
-    })
-    .catch(err => {
-      document.getElementById('estado').textContent = '❌ Error al conectar con el backend: ' + err.message;
-    });
+    // Verifica conexión con el backend
+    fetch(BACKEND_URL)
+      .then(res => res.json())
+      .then(json => {
+        document.getElementById('estado').textContent = '✅ ' + json.mensaje;
+        document.getElementById('loginForm').style.display = 'block';
+      })
+      .catch(err => {
+        document.getElementById('estado').textContent = '❌ Error al conectar con el backend: ' + err.message;
+      });
 
-    // Manejar formulario de login
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    // Envío del formulario
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
       e.preventDefault();
 
       const username = document.getElementById('username').value.trim();
@@ -49,12 +68,10 @@
       try {
         const res = await fetch(BACKEND_URL, {
           method: 'POST',
-          mode: 'cors',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ username, password }),
-          credentials: 'omit'  // evita enviar cookies
+          body: JSON.stringify({ username, password })
         });
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
