@@ -1,53 +1,38 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Login con API</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 2em; }
-    #estado-backend, #response { margin-bottom: 1em; font-weight: bold; white-space: pre-wrap; }
-  </style>
-</head>
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Login JSONP</title></head>
 <body>
-  <div id="estado-backend">Verificando conexión con el backend…</div>
-
-  <form id="loginForm">
-    <label>Usuario:<br><input type="text" id="username" required></label><br>
-    <label>Contraseña:<br><input type="password" id="password" required></label><br>
-    <button type="submit">Iniciar sesión</button>
-  </form>
-
+  <div id="estado">Verificando backend…</div>
   <pre id="response"></pre>
-
-<script>
-  const BACKEND_URL = 'https://script.google.com/macros/s/AKfyc.../exec'; // tu backend intermedio
-
-  document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const u = document.getElementById('username').value.trim();
-    const p = document.getElementById('password').value.trim();
-
-    const responseDiv = document.getElementById('response');
-    responseDiv.textContent = '🔄 Verificando...';
-
-    fetch(BACKEND_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username: u, password: p })
-    })
-    .then(res => res.json())
-    .then(data => {
-      responseDiv.textContent = JSON.stringify(data, null, 2);
-    })
-    .catch(err => {
-      responseDiv.textContent = '❌ Error al conectar con el backend: ' + err;
-    });
-  });
-</script>
-
-
+  <script>
+    const BACKEND = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
+    function verify() {
+      fetch(BACKEND)
+        .then(r=>r.json())
+        .then(j=>{ document.getElementById('estado').textContent='✅ '+j.mensaje; loginForm(); })
+        .catch(e=>{ document.getElementById('estado').textContent='❌ Error backend: '+e; });
+    }
+    function loginForm() {
+      document.body.insertAdjacentHTML('beforeend', `
+        <h3>Login</h3>
+        <input id="u" placeholder="Usuario"/><input id="p" placeholder="Clave"/>
+        <button onclick="login()">Entrar</button>
+      `);
+    }
+    function login() {
+      const u=encodeURIComponent(document.getElementById('u').value);
+      const p=encodeURIComponent(document.getElementById('p').value);
+      const cb = 'cb'+Date.now();
+      window[cb] = function(data) {
+        document.getElementById('response').textContent = JSON.stringify(data,null,2);
+        delete window[cb];
+        document.head.removeChild(script);
+      };
+      const script = document.createElement('script');
+      script.src = `${BACKEND}?username=${u}&password=${p}&jsonpCallback=${cb}`;
+      document.head.appendChild(script);
+    }
+    verify();
+  </script>
 </body>
 </html>
