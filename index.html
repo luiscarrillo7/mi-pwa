@@ -21,31 +21,14 @@
   <pre id="response"></pre>
 
 <script>
-  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfyc.../exec'; // tu backend intermedio
 
-  const estadoBackend = document.getElementById('estado-backend');
-  const responseDiv = document.getElementById('response');
-
-  // Verificar conexión al backend (GET simple)
-  fetch(BACKEND_URL)
-    .then(res => res.json())
-    .then(json => {
-      if (json.status === 'ok') {
-        estadoBackend.textContent = '✅ ' + json.mensaje;
-      } else {
-        estadoBackend.textContent = '❌ Estado inesperado del backend';
-      }
-    })
-    .catch(err => {
-      estadoBackend.textContent = '❌ Error de conexión con backend: ' + err;
-    });
-
-  // Login usando POST con JSON
-  document.getElementById('loginForm').addEventListener('submit', function (e) {
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const u = document.getElementById('username').value.trim();
     const p = document.getElementById('password').value.trim();
 
+    const responseDiv = document.getElementById('response');
     responseDiv.textContent = '🔄 Verificando...';
 
     fetch(BACKEND_URL, {
