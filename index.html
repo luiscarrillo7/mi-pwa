@@ -26,11 +26,11 @@
   const estadoBackend = document.getElementById('estado-backend');
   const responseDiv = document.getElementById('response');
 
-  // Verificación inicial del estado (GET)
+  // Verificar conexión al backend (GET simple)
   fetch(BACKEND_URL)
     .then(res => res.json())
     .then(json => {
-      if(json.status === 'ok') {
+      if (json.status === 'ok') {
         estadoBackend.textContent = '✅ ' + json.mensaje;
       } else {
         estadoBackend.textContent = '❌ Estado inesperado del backend';
@@ -40,8 +40,8 @@
       estadoBackend.textContent = '❌ Error de conexión con backend: ' + err;
     });
 
-  // Enviar login vía POST
-  document.getElementById('loginForm').addEventListener('submit', function(e) {
+  // Login usando POST con JSON
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
     const u = document.getElementById('username').value.trim();
     const p = document.getElementById('password').value.trim();
@@ -64,6 +64,7 @@
     });
   });
 </script>
+
 
 </body>
 </html>
