@@ -25,17 +25,21 @@
     const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
 
     // Verificar conexión con el backend
-    fetch(BACKEND_URL)
-      .then(res => res.json())
-      .then(json => {
-        document.getElementById('estado').textContent = '✅ ' + json.mensaje;
-        document.getElementById('loginForm').style.display = 'block';
-      })
-      .catch(err => {
-        document.getElementById('estado').textContent = '❌ Error al conectar con el backend: ' + err.message;
-      });
+    fetch(BACKEND_URL, {
+      method: 'GET',
+      mode: 'cors',
+      cache: 'no-cache'
+    })
+    .then(res => res.json())
+    .then(json => {
+      document.getElementById('estado').textContent = '✅ ' + json.mensaje;
+      document.getElementById('loginForm').style.display = 'block';
+    })
+    .catch(err => {
+      document.getElementById('estado').textContent = '❌ Error al conectar con el backend: ' + err.message;
+    });
 
-    // Manejar formulario
+    // Manejar formulario de login
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
@@ -45,8 +49,12 @@
       try {
         const res = await fetch(BACKEND_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password }),
+          credentials: 'omit'  // evita enviar cookies
         });
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
