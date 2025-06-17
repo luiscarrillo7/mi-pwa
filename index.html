@@ -1,92 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login Seguro</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      max-width: 400px;
-      margin: auto;
-      background: #f9f9f9;
-    }
-    #estado {
-      margin-bottom: 1em;
-      font-weight: bold;
-    }
-    #response {
-      white-space: pre-wrap;
-      margin-top: 1em;
-      background: #f1f1f1;
-      padding: 1em;
-      border-radius: 5px;
-    }
-    label {
-      display: block;
-      margin: 0.5em 0;
-    }
+    body { font-family: sans-serif; padding: 20px; max-width: 400px; margin: auto; }
+    #estado, #response { margin-bottom: 1em; font-weight: bold; white-space: pre-wrap; }
   </style>
 </head>
 <body>
-  <div id="estado">🔄 Verificando conexión con el backend…</div>
 
+  <div id="estado">🔄 Verificando conexión con el backend…</div>
   <form id="loginForm" style="display:none;">
-    <label>Usuario:
-      <input type="text" id="username" required />
-    </label>
-    <label>Contraseña:
-      <input type="password" id="password" required />
-    </label>
+    <label>Usuario:<br><input type="text" id="username" required /></label><br><br>
+    <label>Contraseña:<br><input type="password" id="password" required /></label><br><br>
     <button type="submit">Iniciar sesión</button>
   </form>
-
   <div id="response"></div>
 
   <script>
-    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbzthO1nOeoZEdP6vN-ir-r1EuvBFBqxzqja1cOW0ODegT_pEfj77674btHyeCzyy9A8/exec';
+    const e = document.getElementById.bind(document);
+    const estado = e('estado'), resp = e('response'), form = e('loginForm');
 
-    // Verifica conexión con el backend
-    fetch(BACKEND_URL)
-      .then(res => res.json())
-      .then(json => {
-        document.getElementById('estado').textContent = '✅ ' + json.mensaje;
-        document.getElementById('loginForm').style.display = 'block';
+    fetch(URL)
+      .then(r => r.json())
+      .then(j => {
+        if (j.status === 'ok') {
+          estado.textContent = '✅ ' + j.mensaje;
+          form.style.display = 'block';
+        } else {
+          estado.textContent = '❌ Estado inesperado';
+        }
       })
       .catch(err => {
-        document.getElementById('estado').textContent = '❌ Error al conectar con el backend: ' + err.message;
+        estado.textContent = '❌ No hay conexión: ' + err.message;
       });
 
-    // Envío del formulario
-    document.getElementById('loginForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-
+    form.addEventListener('submit', async ev => {
+      ev.preventDefault();
+      const u = e('username').value.trim(), p = e('password').value.trim();
+      resp.textContent = '🔄 Verificando…';
       try {
-        const res = await fetch(BACKEND_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, password })
-        });
-
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-
-        if (data.status === 'ok') {
-          document.getElementById('response').textContent = `✅ Login exitoso\nDNI: ${data.dni || 'No proporcionado'}`;
+        const r = await fetch(`${URL}?username=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}`);
+        const j = await r.json();
+        if (j.status === 'success' || j.status === 'ok') {
+          resp.textContent = `✅ Login exitoso\n${j.message || ''}\nDNI: ${j.dni || ''}`;
         } else {
-          document.getElementById('response').textContent = '❌ Credenciales incorrectas';
+          resp.textContent = '❌ ' + (j.message || 'Error');
         }
-
-      } catch (error) {
-        document.getElementById('response').textContent = '❌ Error al conectar con el backend: ' + error.message;
+      } catch (err) {
+        resp.textContent = '❌ Error conexión: ' + err.message;
       }
     });
   </script>
+
 </body>
 </html>
